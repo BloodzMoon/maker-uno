@@ -46,11 +46,13 @@ void setup() {
 /* ----- Loop here ----- */
 void loop() {
   if (digitalRead(BUTTON) == LOW) {
-    mode = (mode == MODE::RANDOM) ? MODE::BOUNCE : MODE(mode + 1);
     set = false;
+    lowALL();
     changeFX();
-    delay(100);
+    mode = (mode == MODE::RANDOM) ? MODE::BOUNCE : MODE(mode + 1);
+    delay(250);
   }
+  Serial.println(mode);
   switch (mode) {
     case MODE::BOUNCE :
       modeBounce();
@@ -82,6 +84,12 @@ void startFX() {
   }
 }
 
+void lowALL() {
+  for (int pin = 3; pin < 14; pin++) {
+    digitalWrite(pin, LOW);
+  }
+}
+
 void changeFX() {
   tone(BUZZER, NOTE_C5, 100);
   delay(100);
@@ -95,32 +103,47 @@ void modeBounce() {
     set = true;
     timer = 0;
     pin = 3;
-    flag = 13;
   }
-
-  Serial.println(pin);
   if (millis() - timer > 100) {
     digitalWrite(pin, LOW);
     pin = (swap) ? pin - 1 : pin + 1;
-    if (pin > 12) {
-      swap = true;
-    }
-    else if (pin < 4) {
-      swap = false;
-    }
+    swap = (pin > 12 or pin < 4) ? !swap : swap;
     timer = millis();
     digitalWrite(pin, HIGH);
   }
-
-
 }
 
 void modeHalf() {
-
+  if (!set) {
+    set = true;
+    timer = 0;
+    pin = 3;
+    pin2 = 13;
+  }
+  if (millis() - timer > 100) {
+    digitalWrite(pin, LOW);
+    digitalWrite(pin2, LOW);
+    pin = (swap) ? pin - 1 : pin + 1;
+    pin2 = (swap) ? pin2 + 1 : pin2 - 1;
+    swap = (pin > 6 or pin < 4) ? !swap : swap;
+    timer = millis();
+    digitalWrite(pin, HIGH);
+    digitalWrite(pin2, HIGH);
+  }
 }
 
 void modeCharge() {
-
+  if (!set) {
+    set = true;
+    timer = 0;
+    pin = 3;
+  }
+  if (millis() - timer > 100) {
+    digitalWrite(pin, !swap);
+    pin = (swap) ? pin - 1 : pin + 1;
+    swap = (pin > 12 or pin < 4) ? !swap : swap;
+    timer = millis();
+  }
 }
 
 void modeLoading() {
