@@ -6,7 +6,7 @@
 ## About this
 
 This sketch play with led builtin to create amazing lighting. Press the builtin push button to change mode.  
-(have soundFX when changing mode with push button 🔊)
+(have soundFX when changing mode with push button 🔊)  
 Now have 5 different modes  
 
 - Bounce  
