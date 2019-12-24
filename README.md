@@ -1,12 +1,9 @@
 
-<p align="center">
-
 # Maker UNO
 
 > Since 2019
 
-  <img src="https://github.com/BloodzMoon/maker-uno/blob/master/src/makeruno.png" />
-</p>
+![Maker UNO](https://github.com/BloodzMoon/maker-uno/blob/master/src/makeruno.png)
 
 ## About this
 
