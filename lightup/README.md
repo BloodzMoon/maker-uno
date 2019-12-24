@@ -5,7 +5,7 @@
 
 ## About this
 
-This sketch play with led builtin to create amazing lighting  
+This sketch play with led builtin to create amazing lighting. Press the builtin push button to change mode.   
 Now have 5 different modes  
 
 - Bounce  
