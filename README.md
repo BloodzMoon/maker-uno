@@ -3,7 +3,9 @@
 
 > Since 2019
 
-![Maker UNO](https://github.com/BloodzMoon/maker-uno/blob/master/src/makeruno.png)
+<p align="center">
+  <img src="https://github.com/BloodzMoon/maker-uno/blob/master/src/makeruno.png" />
+</p>
 
 ## About this
 
