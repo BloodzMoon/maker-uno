@@ -1,63 +1,57 @@
-#define NOTE_C5  523
-#define NOTE_D5  587
-#define NOTE_E5  659
+#define NOTE_C5 523
+#define NOTE_D5 587
+#define NOTE_E5 659
 #define NOTE_G5 784
 
 #define BUTTON 2
 #define BUZZER 8
 
-/* ----- Global variables ----- */
-enum MODE {
-  BOUNCE,
-  HALF,
-  CHARGE,
-  LOADING,
-  RANDOM
-};
-volatile MODE mode = MODE::BOUNCE;
 
-int melody[] = {
-  NOTE_E5, NOTE_D5, NOTE_C5, NOTE_D5
+/* ----- Variables ----- */
+enum Mode {
+  Bounce,
+  Split,
+  Charge,
+  Loading,
+  Random
 };
 
-int noteDurations[] = {
-  10, 10, 10, 10
-};
-
+volatile Mode mode;
+volatile Mode prev;
 volatile unsigned long buttonTimer = 0;
-int prev = 0;
 
 
-/* Set up here */
+/* ----- Setup function ----- */
 void setup() {
   pinMode(BUTTON, INPUT_PULLUP);
-  for (int pin = 3; pin < 14; pin++) {
+  for (int pin = 3; pin <= 13; pin++) {
     pinMode(pin, OUTPUT);
   }
-  attachInterrupt(digitalPinToInterrupt(BUTTON), changeMode, FALLING);
   startFX();
+  mode = Mode::Bounce;
+  prev = mode;
+  attachInterrupt(digitalPinToInterrupt(BUTTON), changeMode, FALLING);
 }
 
 
-/* ----- Loop here ----- */
+/* ----- Loop function ----- */
 void loop() {
-  switch (mode) {
-    case MODE::BOUNCE :
-      modeBounce();
-      break;
-    case MODE::HALF :
-      modeHalf();
-      break;
-    case MODE::CHARGE :
-      modeCharge();
-      break;
-    case MODE::LOADING :
-      modeLoading();
-      break;
-    case MODE::RANDOM :
-      modeRandom();
-      break;
+  if (mode == Mode::Bounce) {
+    modeBounce();
   }
+  else if (mode == Mode::Split) {
+    modeSplit();
+  }
+  else if (mode == Mode::Charge) {
+    modeCharge();
+  }
+  else if (mode == Mode::Loading) {
+    modeLoading();
+  }
+  else if (mode == Mode::Random) {
+    modeRandom();
+  }
+
   if (mode != prev) {
     changeFX();
     prev = mode;
@@ -65,19 +59,25 @@ void loop() {
 }
 
 
-/* ----- Functions here ----- */
+/* ----- ALL Functions ----- */
 void startFX() {
-  for (int thisNote = 0; thisNote < 4; thisNote++) {
-    int noteDuration = 1000 / noteDurations[thisNote];
-    tone(BUZZER, melody[thisNote], noteDuration);
-    int pauseBetweenNotes = noteDuration * 1.30;
-    delay(pauseBetweenNotes);
+  int melody[] = {
+    NOTE_E5, NOTE_D5, NOTE_C5, NOTE_D5
+  };
+  int noteDurations[] = {
+    10, 10, 10, 10
+  };
+  for (int i = 0; i < 4; i++) {
+    int duration = 1000 / noteDurations[i];
+    tone(BUZZER, melody[i], duration);
+    int pause = duration * 1.30;
+    delay(pause);
     noTone(BUZZER);
   }
 }
 
 void changeFX() {
-  for (int pin = 3; pin < 14; pin++ ) {
+  for (int pin = 3; pin < 14; pin++) {
     digitalWrite(pin, LOW);
   }
   tone(BUZZER, NOTE_C5, 100);
@@ -88,34 +88,34 @@ void changeFX() {
 }
 
 void changeMode() {
-  if ( (unsigned long)(millis() - buttonTimer) > 500 ) {
-    mode = MODE((mode + 1) % 5);
+  if ((unsigned long)(millis() - buttonTimer) > 500) {
+    mode = Mode((mode + 1) % 5);
     buttonTimer = millis();
   }
 }
 
 void modeBounce() {
-  for (int pin = 3; pin <= 13 and mode == MODE::BOUNCE; pin++) {
+  for (int pin = 3; pin <= 13 and mode == Mode::Bounce; pin++) {
     digitalWrite(pin, HIGH);
     delay(100);
     digitalWrite(pin, LOW);
   }
-  for (int pin = 13; pin >= 3 and mode == MODE::BOUNCE; pin--) {
+  for (int pin = 13; pin >= 3 and mode == Mode::Bounce; pin--) {
     digitalWrite(pin, HIGH);
     delay(100);
     digitalWrite(pin, LOW);
   }
 }
 
-void modeHalf() {
-  for (int pin = 3; pin <= 7 and mode == MODE::HALF; pin++) {
+void modeSplit() {
+  for (int pin = 3; pin <= 7 and mode == Mode::Split; pin++) {
     digitalWrite(pin, HIGH);
     digitalWrite(16 - pin, HIGH);
     delay(100);
     digitalWrite(pin, LOW);
     digitalWrite(16 - pin, LOW);
   }
-  for (int pin = 7; pin >= 3 and mode == MODE::HALF; pin--) {
+  for (int pin = 7; pin >= 3 and mode == Mode::Split; pin--) {
     digitalWrite(pin, HIGH);
     digitalWrite(16 - pin, HIGH);
     delay(100);
@@ -125,18 +125,18 @@ void modeHalf() {
 }
 
 void modeCharge() {
-  for (int pin = 3; pin <= 13 and mode == MODE::CHARGE; pin++) {
+  for (int pin = 3; pin <= 13 and mode == Mode::Charge; pin++) {
     digitalWrite(pin, HIGH);
     delay(100);
   }
-  for (int pin = 13; pin >= 3 and mode == MODE::CHARGE; pin--) {
+  for (int pin = 13; pin >= 3 and mode == Mode::Charge; pin--) {
     digitalWrite(pin, LOW);
     delay(100);
   }
 }
 
 void modeLoading() {
-  for (int pin = 0; pin <= 10 and mode == MODE::LOADING; pin++) {
+  for (int pin = 0; pin <= 10 and mode == Mode::Loading; pin++) {
     int p1 = pin + 3;
     int p2 = ((pin + 1) % 11) + 3;
     int p3 = ((pin + 2) % 11) + 3;
@@ -149,19 +149,19 @@ void modeLoading() {
 }
 
 void modeRandom() {
-  int arr[] = { 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 };
+  int randPin[] = { 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 };
   for (int i = 0; i < 11; i++) {
     int j = rand() % i;
-    int tmp = arr[i];
-    arr[i] = arr[j];
-    arr[j] = tmp;
+    int tmp = randPin[i];
+    randPin[i] = randPin[j];
+    randPin[j] = tmp;
   }
-  for (int i = 0; i <= 10 and mode == MODE::RANDOM; i++) {
-    digitalWrite(arr[i], HIGH);
+  for (int i = 0; i <= 10 and mode == Mode::Random; i++) {
+    digitalWrite(randPin[i], HIGH);
     delay(150);
   }
-  for (int i = 10; i >= 0 and mode == MODE::RANDOM; i--) {
-    digitalWrite(arr[i], LOW);
+  for (int i = 10; i >= 0 and mode == Mode::Random; i--) {
+    digitalWrite(randPin[i], LOW);
     delay(150);
   }
 }
