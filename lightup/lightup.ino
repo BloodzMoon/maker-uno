@@ -24,6 +24,8 @@ int noteDurations[] = {
   10, 10, 10, 10
 };
 
+unsigned long buttonTimer;
+bool pressed = false;
 bool set = false;
 bool swap;
 unsigned long timer;
@@ -34,24 +36,18 @@ int flag, flag2;
 /* Set up here */
 void setup() {
   Serial.begin(9600);
-  delay(500);
+  delay(1000);
   pinMode(BUTTON, INPUT_PULLUP);
   for (int pin = 3; pin < 14; pin++) {
     pinMode(pin, OUTPUT);
   }
+  attachInterrupt(digitalPinToInterrupt(BUTTON), changeMode, FALLING);
   startFX();
 }
 
 
 /* ----- Loop here ----- */
 void loop() {
-  if (digitalRead(BUTTON) == LOW) {
-    set = false;
-    lowALL();
-    changeFX();
-    mode = (mode == MODE::RANDOM) ? MODE::BOUNCE : MODE(mode + 1);
-    delay(250);
-  }
   Serial.println(mode);
   switch (mode) {
     case MODE::BOUNCE :
@@ -84,72 +80,88 @@ void startFX() {
   }
 }
 
-void lowALL() {
+
+void changeMode() {
+  set = false;
   for (int pin = 3; pin < 14; pin++) {
     digitalWrite(pin, LOW);
   }
-}
-
-void changeFX() {
   tone(BUZZER, NOTE_C5, 100);
   delay(100);
   tone(BUZZER, NOTE_G5, 100);
   delay(100);
   noTone(BUZZER);
+  mode = MODE((mode + 1) % 5);
 }
 
 void modeBounce() {
-  if (!set) {
-    set = true;
-    timer = 0;
-    pin = 3;
-  }
-  if (millis() - timer > 100) {
-    digitalWrite(pin, LOW);
-    pin = (swap) ? pin - 1 : pin + 1;
-    swap = (pin > 12 or pin < 4) ? !swap : swap;
-    timer = millis();
+  for (int pin = 3; pin <= 13; pin++) {
     digitalWrite(pin, HIGH);
+    delay(100);
+    digitalWrite(pin, LOW);
+  }
+  for (int pin = 13; pin >= 3; pin--) {
+    digitalWrite(pin, HIGH);
+    delay(100);
+    digitalWrite(pin, LOW);
   }
 }
 
 void modeHalf() {
-  if (!set) {
-    set = true;
-    timer = 0;
-    pin = 3;
-    pin2 = 13;
-  }
-  if (millis() - timer > 100) {
-    digitalWrite(pin, LOW);
-    digitalWrite(pin2, LOW);
-    pin = (swap) ? pin - 1 : pin + 1;
-    pin2 = (swap) ? pin2 + 1 : pin2 - 1;
-    swap = (pin > 6 or pin < 4) ? !swap : swap;
-    timer = millis();
+  for (int pin = 3; pin <= 7; pin++) {
     digitalWrite(pin, HIGH);
-    digitalWrite(pin2, HIGH);
+    digitalWrite(16 - pin, HIGH);
+    delay(100);
+    digitalWrite(pin, LOW);
+    digitalWrite(16 - pin, LOW);
+  }
+  for (int pin = 7; pin >= 3; pin--) {
+    digitalWrite(pin, HIGH);
+    digitalWrite(16 - pin, HIGH);
+    delay(100);
+    digitalWrite(pin, LOW);
+    digitalWrite(16 - pin, LOW);
   }
 }
 
 void modeCharge() {
-  if (!set) {
-    set = true;
-    timer = 0;
-    pin = 3;
+  for (int pin = 3; pin <= 13; pin++) {
+    digitalWrite(pin, HIGH);
+    delay(100);
   }
-  if (millis() - timer > 100) {
-    digitalWrite(pin, !swap);
-    pin = (swap) ? pin - 1 : pin + 1;
-    swap = (pin > 12 or pin < 4) ? !swap : swap;
-    timer = millis();
+  for (int pin = 13; pin >= 3; pin--) {
+    digitalWrite(pin, LOW);
+    delay(100);
   }
 }
 
 void modeLoading() {
-
+  for (int pin = 0; pin <= 10; pin++) {
+    int p1 = pin + 3;
+    int p2 = ((pin + 1) % 11) + 3;
+    int p3 = ((pin + 2) % 11) + 3;
+    digitalWrite(p1, HIGH);
+    digitalWrite(p2, HIGH);
+    digitalWrite(p3, HIGH);
+    delay(100);
+    digitalWrite(p1, LOW);
+  }
 }
 
 void modeRandom() {
-
+  int arr[] = { 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 };
+  for (int i = 0; i < 11; i++) {
+    int j = rand() % i;
+    int tmp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = tmp;
+  }
+  for (int i = 0; i < 11; i++) {
+    digitalWrite(arr[i], HIGH);
+    delay(150);
+  }
+  for (int i = 10; i >= 0; i--) {
+    digitalWrite(arr[i], LOW);
+    delay(150);
+  }
 }
