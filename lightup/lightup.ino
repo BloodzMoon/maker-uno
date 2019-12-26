@@ -6,15 +6,17 @@
 #define BUTTON 2
 #define BUZZER 8
 
-
 /* ----- Variables ----- */
 enum Mode {
   Bounce,
   Split,
   Charge,
   Loading,
-  Random
+  Random,
+  Heart,
+  SIZE // <-- always at the end of enum
 };
+const int MODE_SIZE = Mode::SIZE;
 
 volatile Mode mode;
 volatile Mode prev;
@@ -50,6 +52,9 @@ void loop() {
   }
   else if (mode == Mode::Random) {
     modeRandom();
+  }
+  else if (mode == Mode::Heart) {
+    modeHeart();
   }
 
   if (mode != prev) {
@@ -89,7 +94,7 @@ void changeFX() {
 
 void changeMode() {
   if ((unsigned long)(millis() - buttonTimer) > 500) {
-    mode = Mode((mode + 1) % 5);
+    mode = Mode((mode + 1) % MODE_SIZE);
     buttonTimer = millis();
   }
 }
@@ -164,4 +169,26 @@ void modeRandom() {
     digitalWrite(randPin[i], LOW);
     delay(150);
   }
+}
+
+void modeHeart() {
+  for (int count = 0; count < 2 and mode == Mode::Heart; count++) {
+    for (int pin = 7; pin >= 3 and mode == Mode::Heart; pin--) {
+      digitalWrite(pin, HIGH);
+      digitalWrite(16 - pin, HIGH);
+      delay(25);
+    }
+    for (int pin = 3; pin <= 7 and mode == Mode::Heart; pin++) {
+      digitalWrite(pin, LOW);
+      digitalWrite(16 - pin, LOW);
+      delay(25);
+    }
+  }
+  for (int pin = 3; pin <= 13 and mode == Mode::Heart; pin++) {
+    digitalWrite(pin, LOW);
+  }
+  for (int pin = 3; pin <= 13 and mode == Mode::Heart; pin++) {
+    delay(50);
+  }
+
 }

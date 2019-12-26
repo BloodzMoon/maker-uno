@@ -8,13 +8,14 @@
 This sketch play with led builtin to create amazing lighting. Press the builtin push button to change mode.  
 (have soundFX when changing mode with push button 🔊)  
   
-Now have 5 different modes  
+Now have 6 different modes  
 
 - Bounce  
 - Split  
 - Charge  
 - Loading  
 - Random  
+- Heart 🆕
 
 ### Bounce
 
@@ -35,6 +36,22 @@ Now have 5 different modes
 ### Random
 
 ![Random](https://github.com/BloodzMoon/maker-uno/blob/master/lightup/gif/mode5.gif)
+
+### Heart
+
+![Heart](https://github.com/BloodzMoon/maker-uno/blob/master/lightup/gif/mode6.gif)
+
+## Files
+
+```
+.  
+├── ...  
+├── lightup  
+│   ├── gif                 # Image for this readme  
+│   ├── README.md  
+│   └── lightup.ino         # Arduino file  
+└── ...
+```
 
 ## Credit
 
