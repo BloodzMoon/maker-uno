@@ -15,7 +15,7 @@ Now have 6 different modes
 - Charge  
 - Loading  
 - Random  
-- Heart 🆕
+- Heart
 
 ### Bounce
 
@@ -40,18 +40,6 @@ Now have 6 different modes
 ### Heart
 
 ![Heart](https://github.com/BloodzMoon/maker-uno/blob/master/lightup/gif/mode6.gif)
-
-## Files
-
-```
-.  
-├── ...  
-├── lightup  
-│   ├── gif                 # Image for this readme  
-│   ├── README.md  
-│   └── lightup.ino         # Arduino file  
-└── ...
-```
 
 ## Credit
 

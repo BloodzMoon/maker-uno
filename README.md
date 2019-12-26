@@ -9,16 +9,6 @@
 
 Make up for fun. Begin *Maker UNO's* story with me here.
 
-## Files
-
-```
-.  
-├── default_sketch          # Default program come with Maker UNO  
-├── lightup                 # Program that play with LED builtin & Buzzer  
-├── src                     # Image for this readme  
-└── README.md
-```
-
 ## Credit
 
 Created by [BloodzMoon](https://github.com/BloodzMoon/) with ❤
