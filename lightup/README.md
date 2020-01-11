@@ -8,7 +8,7 @@
 This sketch play with led builtin to create amazing lighting. Press the builtin push button to change mode.  
 (have soundFX when changing mode with push button 🔊)  
   
-Now have 6 different modes  
+Now have 7 different modes  
 
 - Bounce  
 - Split  
@@ -16,6 +16,7 @@ Now have 6 different modes
 - Loading  
 - Random  
 - Heart
+- Zoom
 
 ### Bounce
 
@@ -40,6 +41,10 @@ Now have 6 different modes
 ### Heart
 
 ![Heart](https://github.com/BloodzMoon/maker-uno/blob/master/lightup/gif/mode6.gif)
+
+### Zoom
+
+![Zoom](https://github.com/BloodzMoon/maker-uno/blob/master/lightup/gif/mode7.gif)
 
 ## Credit
 

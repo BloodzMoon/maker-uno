@@ -14,6 +14,7 @@ enum Mode {
   Loading,
   Random,
   Heart,
+  Zoom,
   SIZE // <-- always at the end of enum
 };
 const int MODE_SIZE = Mode::SIZE;
@@ -55,6 +56,9 @@ void loop() {
   }
   else if (mode == Mode::Heart) {
     modeHeart();
+  }
+  else if (mode == Mode::Zoom) {
+    modeZoom();
   }
 
   if (mode != prev) {
@@ -190,5 +194,52 @@ void modeHeart() {
   for (int pin = 3; pin <= 13 and mode == Mode::Heart; pin++) {
     delay(50);
   }
+}
 
+void modeZoom() {
+  int low = 3, high = 13, pin = 3;
+  bool swap = false, rise = true;
+  while (mode == Mode::Zoom) {
+    digitalWrite(high, HIGH);
+    digitalWrite(low, HIGH);
+    if (!swap) {
+      digitalWrite(pin, HIGH);
+      if (pin == high and rise) {
+        digitalWrite(high, LOW);
+        high--;
+        rise = false;
+      } else if (pin == low and !rise) {
+        digitalWrite(low, LOW);
+        low++;
+        rise = true;
+      }
+      delay(100);
+      digitalWrite(pin, LOW);
+      pin = (rise) ? pin + 1 : pin - 1;
+      if (low >= high) {
+        swap = true;
+        low = 7;
+        pin = 8;
+        high = 9;
+      }
+    }
+    else {
+      digitalWrite(pin, HIGH);
+      if (pin == high and rise) {
+        digitalWrite(high, LOW);
+        high++;
+        rise = false;
+      } else if (pin == low and !rise) {
+        digitalWrite(low, LOW);
+        low--;
+        rise = true;
+      }
+      delay(100);
+      digitalWrite(pin, LOW);
+      pin = (rise) ? pin + 1 : pin - 1;
+      if (low == 3 and high == 13) {
+        swap = false;
+      }
+    }
+  }
 }
